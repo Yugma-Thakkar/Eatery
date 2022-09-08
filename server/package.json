@@ -1,0 +1,23 @@
+{
+  "name": "eatery",
+  "version": "1.0.0",
+  "description": "web app to browse restaurants, order and track food",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yugma-Thakkar/Eatery.git"
+  },
+  "author": "Yugma Thakkar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Yugma-Thakkar/Eatery/issues"
+  },
+  "homepage": "https://github.com/Yugma-Thakkar/Eatery#readme",
+  "dependencies": {
+    "nodemon": "^2.0.19"
+  }
+}
