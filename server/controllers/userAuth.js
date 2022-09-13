@@ -14,6 +14,26 @@ function generateRefreshToken(id) {
     return jwt.sign({id}, process.env.REFRESH_TOKEN_SECRET)
 }
 
+//REFRESH TOKEN
+exports.refreshToken = async (req, res) => {
+    const refreshToken = req.body.refreshToken
+    
+    //CHECK IF REFRESH TOKEN EXISTS
+    if (refreshToken == null) {
+        return res.status(401).json({ isOK: 'FAIL', error: `REFRESH TOKEN VALIDATION FAIL`, message: 'REFRESH TOKEN NOT FOUND' })
+    }
+
+    //VERIFY REFRESH TOKEN
+    const decodedRefreshToken = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET)
+    try {
+        const newAccessToken = generateAccessToken({id: decodedRefreshToken.id})
+        return res.status(200).json({ isOK: 'OK', message: 'ACCESS TOKEN REFRESHED', accessToken: newAccessToken })
+    } catch (error) {
+        console.error(error.message)
+        res.status(401).json({ isOK: 'FAIL', error: `${error.message}`, message: 'REFRESH TOKEN IS INVALID' })
+    }
+}
+
 //LOGIN USER
 exports.loginUser = async (req, res) => {
     const { email, password } = req.body
