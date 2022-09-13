@@ -5,9 +5,9 @@ require('dotenv').config()
 const express = require('express')
 const app = express()
 
-//IMPORT CORS FOR CROSS ORIGIN RESOURCE SHARING
-const cors = require('cors')
-app.use(cors())
+// //IMPORT CORS FOR CROSS ORIGIN RESOURCE SHARING
+// const cors = require('cors')
+// app.use(cors())
 
 //IMPORT MONGOOSE
 const mongoose = require('mongoose')
@@ -26,10 +26,10 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 //IMPORT ROUTES
-// const userAuth = require('./routes/userAuth')
+const userAuthRoutes = require('./routes/userAuthRoutes')
 
 //USE ROUTES
-// app.use('/userAuth', userAuth)
+app.use('/userAuth', userAuthRoutes)
 
 //SET UP SERVER
 const port = process.env.PORT || 5000
