@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs')
 
 //GENERATE ACCESS TOKEN
 function generateAccessToken(id) {
-    return jwt.sign({id}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10s' })
+    return jwt.sign({id}, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15s' })
 }
 
 //GENERATE REFRESH TOKEN
@@ -16,22 +16,26 @@ function generateRefreshToken(id) {
 
 //REFRESH TOKEN
 exports.refreshToken = async (req, res) => {
-    const refreshToken = req.body.refreshToken
-    
+    //GET REFRESH TOKEN FROM REQUEST
+    const user = await User.findOne({email: req.body.email})
+    const refreshToken = user.refreshToken
+
     //CHECK IF REFRESH TOKEN EXISTS
-    if (refreshToken == null) {
-        return res.status(401).json({ isOK: 'FAIL', error: `REFRESH TOKEN VALIDATION FAIL`, message: 'REFRESH TOKEN NOT FOUND' })
-    }
+    if (refreshToken === null) return res.status(401).json({ isOK: 'FAIL', message: 'REFRESH TOKEN NOT FOUND' })
 
     //VERIFY REFRESH TOKEN
     const decodedRefreshToken = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET)
-    try {
-        const newAccessToken = generateAccessToken({id: decodedRefreshToken.id})
-        return res.status(200).json({ isOK: 'OK', message: 'ACCESS TOKEN REFRESHED', accessToken: newAccessToken })
-    } catch (error) {
-        console.error(error.message)
-        res.status(401).json({ isOK: 'FAIL', error: `${error.message}`, message: 'REFRESH TOKEN IS INVALID' })
-    }
+    if (decodedRefreshToken === null) return res.status(401).json({ isOK: 'FAIL', message: 'REFRESH TOKEN INVALID' })
+
+    //GENERATE NEW ACCESS & REFRESH TOKENS
+    const newAccessToken = generateAccessToken({id: decodedRefreshToken.id})
+    const newRefreshToken = generateRefreshToken({id: decodedRefreshToken.id})
+
+    //UPDATE REFRESH TOKEN IN DB
+    await User.findOneAndUpdate({email: req.body.email}, {refreshToken: newRefreshToken})
+
+    //SEND NEW ACCESS TOKEN
+    return res.status(200).json({ isOK: 'OK', message: 'REFRESH TOKEN SUCCESS', accessToken: newAccessToken })
 }
 
 //LOGIN USER
@@ -48,7 +52,9 @@ exports.loginUser = async (req, res) => {
                 const accessToken = generateAccessToken({id: user._id})
                 //ASSIGN REFRESH TOKEN
                 const refreshToken = generateRefreshToken({id: user._id})
-                return res.status(200).json({ isOK: 'OK', message: 'USER LOGGED IN', accessToken: accessToken, refreshToken: refreshToken, user: user })
+                //UPDATE REFRESH TOKEN IN DB
+                await User.findOneAndUpdate({email}, {refreshToken: refreshToken})
+                return res.status(200).json({ isOK: 'OK', message: 'USER LOGGED IN', accessToken: accessToken, user: user })
             }
             else {
                 return res.status(401).json({ isOK: 'FAIL', message: 'INCORRECT PASSWORD' })

@@ -27,9 +27,11 @@ app.use(express.urlencoded({ extended: true }))
 
 //IMPORT ROUTES
 const userAuthRoutes = require('./routes/userAuthRoutes')
+const userRoutes = require('./routes/userRoutes')
 
 //USE ROUTES
 app.use('/userAuth', userAuthRoutes)
+app.use('/user', userRoutes)
 
 //SET UP SERVER
 const port = process.env.PORT || 5000
@@ -37,4 +39,3 @@ app.listen(port, () => {
     console.log(`Listening to port ${port}...`)
 })
 
-//TODO: ADD REFRESH TOKEN API
