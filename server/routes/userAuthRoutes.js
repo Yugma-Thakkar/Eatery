@@ -5,6 +5,9 @@ const router = express.Router()
 // const User = require('../models/userSchema')
 const userAuthController = require('../controllers/userAuth')
 
+//REFRESH TOKEN
+router.post('/refreshToken', userAuthController.refreshToken)
+
 //LOGIN USER
 router.post('/', userAuthController.loginUser) 
 
