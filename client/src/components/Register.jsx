@@ -1,9 +1,11 @@
 import React from "react";
+import Navbar from "./Navbar";
 
 const Register = () => {
     return (
         // basic register page
         <div>
+            <Navbar></Navbar>
             <form className="my-5">
                 <div className="container w-50">
 

@@ -1,9 +1,11 @@
 import React from 'react'
+import Navbar from './Navbar';
 
 const Login = () => {
     // basic login page
     return (
         <div>
+            <Navbar></Navbar>
             <form className="my-5">
                 <div className="container w-50">
                     <h1 className="my-5">Welcome back to Eatery !!!</h1>
